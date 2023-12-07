@@ -200,7 +200,7 @@ class RawNet2Model(BaseModel):
             nn.BatchNorm1d(channels2),
             nn.LeakyReLU(),
         )
-        self.gru = nn.GRU(channels2, gru_hidden_size, 3)
+        self.gru = nn.GRU(channels2, gru_hidden_size, num_layers=3, batch_first=True)
         self.head = nn.Linear(gru_hidden_size, 2)
 
     def forward(self, audio, **kwargs):
