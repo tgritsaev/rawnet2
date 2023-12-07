@@ -2,6 +2,7 @@ import random
 from tqdm import tqdm
 
 import PIL
+import numpy as np
 import torch
 from torchvision.transforms import ToTensor
 
@@ -137,7 +138,7 @@ class Trainer(BaseTrainer):
             # self._log_spectrogram(batch["spectrogram"])
             self._log_scalars(self.evaluation_metrics)
         for metric in self.metrics:
-            self.evaluation_metrics.update(metric.name, metric(all_targets, all_preds))
+            self.evaluation_metrics.update(metric.name, metric(np.array(all_targets), np.array(all_preds)))
         return self.evaluation_metrics.result()
 
     def _train_epoch(self, epoch):
