@@ -114,9 +114,6 @@ class Trainer(BaseTrainer):
                 self.lr_scheduler.step()
             metrics.update("loss", batch["loss"].item())
 
-        if not is_train:
-            for metric in self.metrics:
-                metrics.update(metric.name, metric(**batch))
         return batch
 
     def _evaluation_epoch(self, epoch, part, dataloader):
@@ -128,14 +125,19 @@ class Trainer(BaseTrainer):
         """
         self.model.eval()
         self.evaluation_metrics.reset()
+        all_targets = []
+        all_preds = []
         with torch.no_grad():
             for _, batch in tqdm(enumerate(dataloader), desc=part, total=len(dataloader)):
                 batch = self.process_batch(batch, False, 0, metrics=self.evaluation_metrics)
+                all_targets += batch["target"].detach().cpu().tolist()
+                all_preds += (batch["pred"].detach().cpu()[:, 1]).tolist()
             self.writer.set_step(epoch * self.len_epoch, part)
             self._log_predictions(**batch)
             # self._log_spectrogram(batch["spectrogram"])
             self._log_scalars(self.evaluation_metrics)
-
+        for metric in self.metrics:
+            self.evaluation_metrics.update(metric.name, metric(all_targets, all_preds))
         return self.evaluation_metrics.result()
 
     def _train_epoch(self, epoch):

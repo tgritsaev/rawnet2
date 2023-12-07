@@ -39,7 +39,7 @@ class EqualErrorRate:
     def __init__(self):
         self.name = "equal_error_rate"
 
-    def __call__(self, target, pred, **kwargs):
+    def __call__(self, target: np.array, pred: np.array, **kwargs):
         print(target, pred)
         target = target.detach().cpu().numpy()
         pred = pred.detach().cpu().numpy()[:, 1]
