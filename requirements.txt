@@ -1,20 +1,10 @@
 torch
 torchaudio
 torchvision
-speechbrain
 numpy
 tqdm
 matplotlib
 pandas
 
-datasets
-torch_audiomentations
 wandb
-pillow
 gdown
-Unidecode
-inflect
-nltk
-hparams
-TextGrid
-pyworld
