@@ -143,10 +143,13 @@ class SincConv_fast(nn.Module):
         return F.conv1d(waveforms, self.filters, stride=self.stride, padding=self.padding, dilation=self.dilation, bias=None, groups=1)
 
 
+tmp = 0
+
+
 class FMS(nn.Module):
     def __init__(self):
         self.avgpool = nn.AvgPool1d(1)
-        self.attention = nn.Linear(in_features=in_features, out_features=l_out_features)
+        self.attention = nn.Linear(in_features=tmp, out_features=tmp)
 
     def forward(self, x):
         out = F.adaptive_avg_pool1d(x.view(x.shape[0], -1), 1)
@@ -158,10 +161,10 @@ class FMS(nn.Module):
 class ResBlock(nn.Module):
     def __init__(self, kernel_size):
         self.layers = nn.Sequential(
-            nn.BatchNorm1d(),
+            nn.BatchNorm1d(tmp),
             nn.LeakyReLU(),
             nn.Conv1d(3, 1, kernel_size, padding="same"),
-            nn.BatchNorm1d(),
+            nn.BatchNorm1d(tmp),
             nn.LeakyReLU(),
             nn.Conv1d(3, 1, kernel_size, padding="same"),
             nn.MaxPool1d(3),
@@ -182,11 +185,12 @@ class RawNet2Model(BaseModel):
             *[ResBlock(channels2) for _ in range(4)],
         )
         self.grus = nn.Sequential(
-            nn.BatchNorm1d(),
+            nn.BatchNorm1d(tmp),
             nn.LeakyReLU(),
-            nn.GRU(input_size, hidden_size, 3),
+            nn.GRU(tmp, tmp, 3),
         )
-        self.head = nn.Linear(..., 2)
+        self.head = nn.Linear(tmp, 2)
 
     def forward(self, wav, **kwargs):
-        ...
+        print(f"{wav.shape=}")
+        return {"pred": 1}
