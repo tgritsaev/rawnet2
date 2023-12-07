@@ -8,7 +8,6 @@ from torchvision.transforms import ToTensor
 from src.trainer.base_trainer import BaseTrainer
 from src.logger.utils import plot_spectrogram_to_buf
 from src.utils import inf_loop, MetricTracker
-from waveglow import get_wav, get_waveglow
 from src.utils import DEFAULT_SR
 
 
@@ -43,11 +42,8 @@ class Trainer(BaseTrainer):
             self.len_epoch = len_epoch
         self.evaluation_dataloaders = {k: v for k, v in dataloaders.items() if k != "train"}
 
-        self.loss_names = ["loss", "mel_loss", "duration_loss", "energy_loss", "pitch_loss"]
-        self.train_metrics = MetricTracker(*self.loss_names, "grad_norm")
-        self.batch_expand_size = config["trainer"].get("batch_expand_size", 1)
-        self.iters_to_accumulate = config["trainer"].get("iters_to_accumulate", 1)
-        self.waveglow = get_waveglow(self.config["trainer"]["waveglow_path"])
+        self.train_metrics = MetricTracker("loss", "grad_norm", writer=self.writer)
+        self.evaluation_metrics = MetricTracker(*[m.name for m in metrics], "grad_norm", writer=self.writer)
 
     @staticmethod
     def move_batch_to_device(batch, device: torch.device):
@@ -73,12 +69,8 @@ class Trainer(BaseTrainer):
         return base.format(current, total, 100.0 * current / total)
 
     @torch.no_grad()
-    def _log_predictions(self, mel_prediction, examples_to_log=4, **kwargs):
-        mel_prediction = mel_prediction[:examples_to_log].transpose(1, 2).to("cuda")
-        wavs = get_wav(mel_prediction, self.waveglow)
-
-        for i, wav in enumerate(wavs):
-            self.writer.add_audio(f"audio-{i}", wav, sample_rate=DEFAULT_SR)
+    def _log_predictions(self, audio, pred, target, examples_to_log=4, **kwargs):
+        ...
 
     def _log_spectrogram(self, spectrogram_batch):
         spectrogram = random.choice(spectrogram_batch.cpu())
@@ -110,12 +102,10 @@ class Trainer(BaseTrainer):
         batch.update(outputs)
         if is_train:
             loss = self.criterion(**batch)
-            for key in loss.keys():
-                loss[key] /= self.iters_to_accumulate
             batch.update(loss)
             batch["loss"].backward()
 
-            if (batch_idx + 1) % self.iters_to_accumulate == 0 or (batch_idx + 1) == self.len_epoch:
+            if (batch_idx + 1) == self.len_epoch:
                 self._clip_grad_norm()
                 self.optimizer.step()
                 self.train_metrics.update("grad_norm", self.get_grad_norm())
@@ -130,24 +120,24 @@ class Trainer(BaseTrainer):
             metrics.update(metric.name, metric(**batch))
         return batch
 
-    # def _evaluation_epoch(self, epoch, part, dataloader):
-    #     """
-    #     Validate after training an epoch
+    def _evaluation_epoch(self, epoch, part, dataloader):
+        """
+        Validate after training an epoch
 
-    #     :param epoch: Integer, current training epoch.
-    #     :return: A log that contains information about validation
-    #     """
-    #     self.model.eval()
-    #     self.evaluation_metrics.reset()
-    #     with torch.no_grad():
-    #         for batch_idx, batch in tqdm(enumerate(dataloader), desc=part, total=len(dataloader)):
-    #             batch = self.process_batch(batch, False, 0, metrics=self.evaluation_metrics)
-    #         self.writer.set_step(epoch * self.len_epoch, part)
-    #         self._log_predictions(False, **batch)
-    #         # self._log_spectrogram(batch["spectrogram"])
-    #         self._log_scalars(self.evaluation_metrics)
+        :param epoch: Integer, current training epoch.
+        :return: A log that contains information about validation
+        """
+        self.model.eval()
+        self.evaluation_metrics.reset()
+        with torch.no_grad():
+            for _, batch in tqdm(enumerate(dataloader), desc=part, total=len(dataloader)):
+                batch = self.process_batch(batch, False, 0, metrics=self.evaluation_metrics)
+            self.writer.set_step(epoch * self.len_epoch, part)
+            self._log_predictions(False, **batch)
+            # self._log_spectrogram(batch["spectrogram"])
+            self._log_scalars(self.evaluation_metrics)
 
-    #     return self.evaluation_metrics.result()
+        return self.evaluation_metrics.result()
 
     def _train_epoch(self, epoch):
         """
@@ -188,9 +178,12 @@ class Trainer(BaseTrainer):
 
                 if real_batch_idx + 1 >= self.len_epoch:
                     self._log_predictions(**batch)
-                    log = last_train_metrics
-                    return log
+                    break
 
-        # for part, dataloader in self.evaluation_dataloaders.items():
-        #     val_log = self._evaluation_epoch(epoch, part, dataloader)
-        #     log.update(**{f"{part}_{name}": value for name, value in val_log.items()})
+        log = last_train_metrics
+
+        for part, dataloader in self.evaluation_dataloaders.items():
+            val_log = self._evaluation_epoch(epoch, part, dataloader)
+            log.update(**{f"{part}_{name}": value for name, value in val_log.items()})
+
+        return log

@@ -33,3 +33,11 @@ def compute_eer(bonafide_scores, other_scores):
     min_index = np.argmin(abs_diffs)
     eer = np.mean((frr[min_index], far[min_index]))
     return eer, thresholds[min_index]
+
+
+class EqualErrorRate:
+    def __init__(self):
+        self.name = "equal_error_rate"
+
+    def __call__(self, bonafide_scores, other_scores):
+        return compute_eer(bonafide_scores, other_scores)[0]

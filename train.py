@@ -5,6 +5,7 @@ import numpy as np
 import torch
 
 import src.loss as module_loss
+import src.metric as module_metric
 import src.model as module_arch
 from src.trainer import Trainer
 from src.utils import prepare_device
@@ -40,7 +41,7 @@ def main(config):
 
     # get function handles of loss and metrics
     loss_module = config.init_obj(config["loss"], module_loss).to(device)
-    metrics = []  # [config.init_obj(metric_dict, module_metric) for metric_dict in config["metrics"]]
+    metrics = [config.init_obj(metric_dict, module_metric) for metric_dict in config["metrics"]]
 
     # build optimizer, learning rate scheduler. delete every line containing lr_scheduler for
     # disabling scheduler
