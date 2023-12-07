@@ -90,8 +90,8 @@
         "verbosity": 2,
         "monitor": "min val_loss",
         "early_stop": 100,
-        "visualize": null,
-        "wandb_project": "dla5_one_batch",
+        "visualize": "wandb",
+        "wandb_project": null,
         "grad_norm_clip": 5
     }
 }
