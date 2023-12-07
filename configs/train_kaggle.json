@@ -7,38 +7,41 @@
             "sinc_channels": 128,
             "sinc_filter_length": 1024,
             "channels1": 20,
-            "channels2": 128
+            "channels2": 128,
+            "gru_hidden_size": 1024
         }
     },
     "data": {
         "train": {
-            "batch_size": 8,
+            "batch_size": 32,
             "num_workers": 1,
             "datasets": [
                 {
                     "type": "ASVspoof2019Dataset",
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
-                        "part": "train"
+                        "part": "train",
+                        "max_sec_length": 4
                     }
                 }
             ]
         },
         "val": {
-            "batch_size": 1,
+            "batch_size": 16,
             "num_workers": 1,
             "datasets": [
                 {
                     "type": "ASVspoof2019Dataset",
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
-                        "part": "dev"
+                        "part": "dev",
+                        "limit": 256
                     }
                 }
             ]
         },
         "test": {
-            "batch_size": 1,
+            "batch_size": 16,
             "num_workers": 1,
             "datasets": [
                 {
@@ -72,7 +75,7 @@
         "type": "OneCycleLR",
         "args": {
             "epochs": 10,
-            "steps_per_epoch": 1000,
+            "steps_per_epoch": 3000,
             "anneal_strategy": "cos",
             "max_lr": 3e-4,
             "pct_start": 0.2
@@ -80,7 +83,7 @@
     },
     "trainer": {
         "epochs": 10,
-        "len_epoch": 1000,
+        "len_epoch": 3000,
         "log_step": 100,
         "save_dir": "saved/",
         "save_period": 1,

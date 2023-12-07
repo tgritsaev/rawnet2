@@ -2,6 +2,7 @@ import random
 from tqdm import tqdm
 
 import PIL
+import pandas as pd
 import numpy as np
 import torch
 from torchvision.transforms import ToTensor
@@ -71,7 +72,20 @@ class Trainer(BaseTrainer):
 
     @torch.no_grad()
     def _log_predictions(self, audio, pred, target, examples_to_log=4, **kwargs):
-        ...
+        rows = {}
+        i = 0
+        convert_to_string = lambda v: "spoof" if v == 0 else "bona-fide"
+        for audio, pred, target in zip(audio, pred, target):
+            if i >= examples_to_log:
+                break
+            rows[i] = {
+                "audio": self.writer.wandb.Audio(audio.cpu().squeeze().numpy(), sample_rate=DEFAULT_SR),
+                "pred": convert_to_string(pred),
+                "target": convert_to_string(target),
+            }
+            i += 1
+
+        self.writer.add_table("logs", pd.DataFrame.from_dict(rows, orient="index"))
 
     def _log_spectrogram(self, spectrogram_batch):
         spectrogram = random.choice(spectrogram_batch.cpu())
