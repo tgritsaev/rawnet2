@@ -79,7 +79,7 @@ class Trainer(BaseTrainer):
             rows[idx] = {
                 "audio": self.writer.wandb.Audio(audio[idx].cpu().squeeze().numpy(), sample_rate=DEFAULT_SR),
                 "pred": pred[idx],
-                "target": convert_to_string(target),
+                "target": convert_to_string(target[idx]),
             }
 
         self.writer.add_table("logs", pd.DataFrame.from_dict(rows, orient="index"))
