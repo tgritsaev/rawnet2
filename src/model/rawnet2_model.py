@@ -195,6 +195,8 @@ class RawNet2Model(BaseModel):
         )
         self.head = nn.Linear(tmp, 2)
 
-    def forward(self, wav, **kwargs):
-        print(f"{wav.shape=}")
+    def forward(self, audio, **kwargs):
+        print(f"\n{audio.shape=}")
+        x = self.sinc_filters(audio)
+        print(f"\n{x.shape=}")
         return {"pred": 1}
