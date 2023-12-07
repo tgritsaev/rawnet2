@@ -78,7 +78,7 @@ class Trainer(BaseTrainer):
             idx = random.randint(0, audio.shape[0] - 1)
             rows[idx] = {
                 "audio": self.writer.wandb.Audio(audio[idx].cpu().squeeze().numpy(), sample_rate=DEFAULT_SR),
-                "pred": pred[idx],
+                "pred": str(pred[idx].tolist()),
                 "target": convert_to_string(target[idx]),
             }
 
