@@ -154,25 +154,29 @@ class FMS(nn.Module):
         self.attention = nn.Linear(in_features=num_features, out_features=num_features)
 
     def forward(self, x):
+        print(f"in FMS {x.shape=}")
         out = F.adaptive_avg_pool1d(x.view(x.shape[0], -1), 1)
+        print(f"{out.shape=}")
         out = self.attention(out)
+        print(f"{out.shape=}")
         out = F.sigmoid().view(out.shape[0], out.shape[1], -1)
+        print(f"{out.shape=}\nFMS end.")
         return x * out + out
 
 
 class ResBlock(nn.Module):
-    def __init__(self, num_features, kernel_size):
+    def __init__(self, in_channels, out_channels, kernel_size):
         super().__init__()
 
         self.layers = nn.Sequential(
-            nn.BatchNorm1d(num_features),
+            nn.BatchNorm1d(in_channels),
             nn.LeakyReLU(),
-            nn.Conv1d(3, 1, kernel_size, padding="same"),
-            nn.BatchNorm1d(num_features),
+            nn.Conv1d(in_channels, in_channels, kernel_size, padding="same"),
+            nn.BatchNorm1d(in_channels),
             nn.LeakyReLU(),
-            nn.Conv1d(3, 1, kernel_size, padding="same"),
+            nn.Conv1d(in_channels, out_channels, kernel_size, padding="same"),
             nn.MaxPool1d(3),
-            FMS(num_features),
+            FMS(out_channels),
         )
 
     def forward(self, x):
@@ -185,12 +189,14 @@ class RawNet2Model(BaseModel):
 
         self.sinc_filters = nn.Sequential(
             SincConv_fast(sinc_channels, sinc_filter_length),
+            torch.abs,
             nn.MaxPool1d(3),
             nn.BatchNorm1d(sinc_channels),
             nn.LeakyReLU(),
         )
         self.resblocks = nn.Sequential(
-            *[ResBlock(sinc_channels, channels1) for _ in range(2)],
+            ResBlock(sinc_channels, channels1, 3),
+            ResBlock(channels1, channels2, 3),
             *[ResBlock(sinc_channels, channels2) for _ in range(4)],
         )
         self.grus = nn.Sequential(

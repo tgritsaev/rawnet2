@@ -20,7 +20,7 @@
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
                         "part": "train",
-                        "max_sec_length": 3,
+                        "max_sec_length": 4,
                         "limit": 8
                     }
                 }
