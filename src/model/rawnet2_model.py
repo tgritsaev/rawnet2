@@ -197,7 +197,7 @@ class RawNet2Model(BaseModel):
             ResBlock(sinc_channels, channels1, 3),
             ResBlock(channels1, channels2, 3),
             *[ResBlock(channels2, channels2, 3) for _ in range(4)],
-            nn.BatchNorm1d(tmp),
+            nn.BatchNorm1d(channels2),
             nn.LeakyReLU(),
         )
         self.grus = nn.GRU(channels2, gru_hidden_size, 3)
