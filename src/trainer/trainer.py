@@ -103,14 +103,12 @@ class Trainer(BaseTrainer):
         if is_train:
             loss = self.criterion(**batch)
             batch.update(loss)
-            print(f"{loss.item()=}")
             batch["loss"].backward()
 
-            if (batch_idx + 1) == self.len_epoch:
-                self._clip_grad_norm()
-                self.optimizer.step()
-                metrics.update("grad_norm", self.get_grad_norm())
-                self.optimizer.zero_grad()
+            self._clip_grad_norm()
+            self.optimizer.step()
+            metrics.update("grad_norm", self.get_grad_norm())
+            self.optimizer.zero_grad()
 
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
