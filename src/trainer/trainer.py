@@ -73,17 +73,14 @@ class Trainer(BaseTrainer):
     @torch.no_grad()
     def _log_predictions(self, audio, pred, target, examples_to_log=4, **kwargs):
         rows = {}
-        i = 0
         convert_to_string = lambda v: "spoof" if v == 0 else "bona-fide"
-        for audio, pred, target in zip(audio, pred, target):
-            if i >= examples_to_log:
-                break
-            rows[i] = {
-                "audio": self.writer.wandb.Audio(audio.cpu().squeeze().numpy(), sample_rate=DEFAULT_SR),
-                "pred": convert_to_string(pred.argmax(-1)),
+        for _ in range(examples_to_log):
+            idx = random.randint(0, audio.shape[0] - 1)
+            rows[idx] = {
+                "audio": self.writer.wandb.Audio(audio[idx].cpu().squeeze().numpy(), sample_rate=DEFAULT_SR),
+                "pred": pred[idx],
                 "target": convert_to_string(target),
             }
-            i += 1
 
         self.writer.add_table("logs", pd.DataFrame.from_dict(rows, orient="index"))
 
