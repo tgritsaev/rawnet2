@@ -1,3 +1,3 @@
-from src.model.rawnet2_model import FastSpeech2Model
+from src.model.rawnet2_model import RawNet2Model
 
-__all__ = ["FastSpeech2Model"]
+__all__ = ["RawNet2Model"]
