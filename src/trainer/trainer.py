@@ -150,35 +150,33 @@ class Trainer(BaseTrainer):
         self.train_metrics.reset()
         self.writer.add_scalar("epoch", epoch)
         bar = tqdm(range(self.len_epoch), desc="train")
-        for list_batch_idx, batches in enumerate(self.train_dataloader):
-            for cur_batch_idx, batch in enumerate(batches):
-                real_batch_idx = cur_batch_idx + list_batch_idx * self.batch_expand_size
-                try:
-                    batch = self.process_batch(batch, True, real_batch_idx, metrics=self.train_metrics)
-                except RuntimeError as e:
-                    if "out of memory" in str(e) and self.skip_oom:
-                        self.logger.warning("OOM on batch. Skipping batch.")
-                        for p in self.model.parameters():
-                            if p.grad is not None:
-                                del p.grad  # free some memory
-                        torch.cuda.empty_cache()
-                        continue
-                    else:
-                        raise e
-                if real_batch_idx % self.log_step == 0:
-                    self.writer.set_step((epoch - 1) * self.len_epoch + real_batch_idx)
-                    self.logger.debug("Train Epoch: {} {} Loss: {:.6f}".format(epoch, self._progress(real_batch_idx), batch["loss"].item()))
-                    self.writer.add_scalar("learning rate", self.lr_scheduler.get_last_lr()[0])
-                    self._log_scalars(self.train_metrics)
-                    # we don't want to reset train metrics at the start of every epoch
-                    # because we are interested in recent train metrics
-                    last_train_metrics = self.train_metrics.result()
-                    self.train_metrics.reset()
-                    bar.update(self.log_step)
+        for batch_idx, batch in enumerate(self.train_dataloader):
+            try:
+                batch = self.process_batch(batch, True, batch_idx, metrics=self.train_metrics)
+            except RuntimeError as e:
+                if "out of memory" in str(e) and self.skip_oom:
+                    self.logger.warning("OOM on batch. Skipping batch.")
+                    for p in self.model.parameters():
+                        if p.grad is not None:
+                            del p.grad  # free some memory
+                    torch.cuda.empty_cache()
+                    continue
+                else:
+                    raise e
+            if batch_idx % self.log_step == 0:
+                self.writer.set_step((epoch - 1) * self.len_epoch + batch_idx)
+                self.logger.debug("Train Epoch: {} {} Loss: {:.6f}".format(epoch, self._progress(batch_idx), batch["loss"].item()))
+                self.writer.add_scalar("learning rate", self.lr_scheduler.get_last_lr()[0])
+                self._log_scalars(self.train_metrics)
+                # we don't want to reset train metrics at the start of every epoch
+                # because we are interested in recent train metrics
+                last_train_metrics = self.train_metrics.result()
+                self.train_metrics.reset()
+                bar.update(self.log_step)
 
-                if real_batch_idx + 1 >= self.len_epoch:
-                    self._log_predictions(**batch)
-                    break
+            if batch_idx + 1 >= self.len_epoch:
+                self._log_predictions(**batch)
+                break
 
         log = last_train_metrics
 
