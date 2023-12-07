@@ -208,6 +208,6 @@ class RawNet2Model(BaseModel):
         x = self.pre_resblocks(torch.abs(x))
         x = self.resblocks(x)
         print(f"\n{x.shape=}")
-        _, x = self.gru(x.transpose(1, 2))
-        print(f"\n{x.shape=}")
+        tmp, x = self.gru(x.transpose(1, 2))
+        print(f"\n{tmp.shape=} {x.shape=}")
         return {"pred": self.head(x)}
