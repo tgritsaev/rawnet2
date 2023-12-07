@@ -201,13 +201,13 @@ class RawNet2Model(BaseModel):
             nn.LeakyReLU(),
         )
         self.gru = nn.GRU(channels2, gru_hidden_size, num_layers=3, batch_first=True)
-        self.head = nn.Linear(gru_hidden_size, 2)
+        self.head = nn.Linear(gru_hidden_size, 1)
 
     def forward(self, audio, **kwargs):
         x = self.sinc_filters(audio.unsqueeze(1))
         x = self.pre_resblocks(torch.abs(x))
         x = self.resblocks(x)
-        print(f"\n{x.shape=}")
-        tmp, x = self.gru(x.transpose(1, 2))
+        _, x = self.gru(x.transpose(1, 2))
+        x = x[-1, :, :].squeeze(0)
         print(f"\n{tmp.shape=} {x.shape=}")
         return {"pred": self.head(x)}
