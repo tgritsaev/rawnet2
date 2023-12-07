@@ -54,7 +54,7 @@ class SincConv_fast(nn.Module):
         min_low_hz=0,
         min_band_hz=0,
     ):
-        super(self).__init__()
+        super().__init__()
 
         if in_channels != 1:
             # msg = (f'SincConv only support one input channel '
