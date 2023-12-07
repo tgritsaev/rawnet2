@@ -7,7 +7,8 @@
             "sinc_channels": 128,
             "sinc_filter_length": 1024,
             "channels1": 20,
-            "channels2": 128
+            "channels2": 128,
+            "gru_hidden_size": 1024
         }
     },
     "data": {

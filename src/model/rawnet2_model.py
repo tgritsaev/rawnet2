@@ -184,11 +184,11 @@ def AbsMaxPool1d(*args, **kwargs):
 
 
 class RawNet2Model(BaseModel):
-    def __init__(self, sinc_channels, sinc_filter_length, channels1, channels2):
+    def __init__(self, sinc_channels, sinc_filter_length, channels1, channels2, gru_hidden_size):
         super().__init__()
 
         self.sinc_filters = SincConv_fast(sinc_channels, sinc_filter_length)
-        self.pre = nn.Sequential(
+        self.pre_resblocks = nn.Sequential(
             nn.MaxPool1d(3),
             nn.BatchNorm1d(sinc_channels),
             nn.LeakyReLU(),
@@ -197,19 +197,17 @@ class RawNet2Model(BaseModel):
             ResBlock(sinc_channels, channels1, 3),
             ResBlock(channels1, channels2, 3),
             *[ResBlock(channels2, channels2, 3) for _ in range(4)],
-        )
-        self.grus = nn.Sequential(
             nn.BatchNorm1d(tmp),
             nn.LeakyReLU(),
-            nn.GRU(channels2, channels2 * 2, 3),
         )
-        self.head = nn.Linear(channels2, 2)
+        self.grus = nn.GRU(channels2, gru_hidden_size, 3)
+        self.head = nn.Linear(gru_hidden_size, 2)
 
     def forward(self, audio, **kwargs):
         x = self.sinc_filters(audio.unsqueeze(1))
-        x = self.pre(torch.abs(x))
+        x = self.pre_resblocks(torch.abs(x))
         x = self.resblocks(x)
         print(f"\n{x.shape=}")
-        x = self.grus(x)
+        x = self.grus(x.tranpose(1, 2))[:, -1, :]
         print(f"\n{x.shape=}")
         return {"pred": self.head(x)}
