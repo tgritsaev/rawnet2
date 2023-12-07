@@ -17,6 +17,6 @@ def pad_1D_tensor(inputs):
 
 def collate_fn(batch: List[dict]):
     audio = pad_1D_tensor([item["audio"].squeeze(0) for item in batch])
-    target = torch.Tensor([item["target"] for item in batch]).to(torch.LongTensor)
+    target = torch.Tensor([item["target"] for item in batch]).to(torch.long)
 
     return {"audio": audio, "target": target}
