@@ -143,7 +143,7 @@ class SincConv_fast(nn.Module):
         return F.conv1d(waveforms, self.filters, stride=self.stride, padding=self.padding, dilation=self.dilation, bias=None, groups=1)
 
 
-tmp = 0
+tmp = 1
 
 
 class FMS(nn.Module):
@@ -191,7 +191,7 @@ class RawNet2Model(BaseModel):
         self.grus = nn.Sequential(
             nn.BatchNorm1d(tmp),
             nn.LeakyReLU(),
-            nn.GRU(tmp, tmp, 3),
+            nn.GRU(tmp, tmp - 1, 3),
         )
         self.head = nn.Linear(tmp, 2)
 
