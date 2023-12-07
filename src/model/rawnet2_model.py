@@ -183,13 +183,16 @@ class ResBlock(nn.Module):
         return self.layers(x)
 
 
+def AbsMaxPool1d(*args, **kwargs):
+    return nn.MaxPool1d(3)
+
+
 class RawNet2Model(BaseModel):
     def __init__(self, sinc_channels, sinc_filter_length, channels1, channels2):
         super().__init__()
 
-        self.sinc_filters = nn.Sequential(
-            SincConv_fast(sinc_channels, sinc_filter_length),
-            torch.abs,
+        self.sinc_filters = SincConv_fast(sinc_channels, sinc_filter_length)
+        self.pre = nn.Sequential(
             nn.MaxPool1d(3),
             nn.BatchNorm1d(sinc_channels),
             nn.LeakyReLU(),
@@ -197,7 +200,7 @@ class RawNet2Model(BaseModel):
         self.resblocks = nn.Sequential(
             ResBlock(sinc_channels, channels1, 3),
             ResBlock(channels1, channels2, 3),
-            *[ResBlock(sinc_channels, channels2) for _ in range(4)],
+            *[ResBlock(channels2, channels2, 3) for _ in range(4)],
         )
         self.grus = nn.Sequential(
             nn.BatchNorm1d(tmp),
@@ -209,6 +212,8 @@ class RawNet2Model(BaseModel):
     def forward(self, audio, **kwargs):
         print(f"\n{audio.shape=}")
         x = self.sinc_filters(audio.unsqueeze(1))
+        print(f"\n{x.shape=}")
+        x = self.pre(torch.abs(x))
         print(f"\n{x.shape=}")
         x = self.resblocks(x)
         print(f"\n{x.shape=}")
