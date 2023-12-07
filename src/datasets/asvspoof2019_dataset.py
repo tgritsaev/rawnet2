@@ -9,8 +9,8 @@ class ASVspoof2019Dataset(Dataset):
         super().__init__()
 
         self.max_length = max_length
-
-        with open(f"{dir}/LA/LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.{part}.trn.txt", "r") as fin:
+        suffix = "trn" if part == "train" else "trl"
+        with open(f"{dir}/LA/LA/ASVspoof2019_LA_cm_protocols/ASVspoof2019.LA.cm.{part}.{suffix}.txt", "r") as fin:
             protocols_txt = fin.readlines()
         self.protocols = dict()
         for protocol_line in protocols_txt:
