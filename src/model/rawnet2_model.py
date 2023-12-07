@@ -155,11 +155,11 @@ class FMS(nn.Module):
 
     def forward(self, x):
         print(f"in FMS {x.shape=}")
-        out = F.adaptive_avg_pool1d(x, 1)
-        print(f"{out.shape=}, {out.view(x.shape[0], -1).shape}")
+        out = F.adaptive_avg_pool1d(x, 1).squueze(-1)
+        print(f"{out.shape=}")
         out = self.attention(out)
         print(f"{out.shape=}")
-        out = F.sigmoid().view(out.shape[0], out.shape[1], -1)
+        out = F.sigmoid().unsqueeze(-1)
         print(f"{out.shape=}\nFMS end.")
         return x * out + out
 
