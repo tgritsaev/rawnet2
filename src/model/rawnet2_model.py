@@ -54,7 +54,7 @@ class SincConv_fast(nn.Module):
         min_low_hz=0,
         min_band_hz=0,
     ):
-        super(SincConv_fast, self).__init__()
+        super(self).__init__()
 
         if in_channels != 1:
             # msg = (f'SincConv only support one input channel '
@@ -148,6 +148,8 @@ tmp = 0
 
 class FMS(nn.Module):
     def __init__(self):
+        super().__init__()
+
         self.avgpool = nn.AvgPool1d(1)
         self.attention = nn.Linear(in_features=tmp, out_features=tmp)
 
@@ -160,6 +162,8 @@ class FMS(nn.Module):
 
 class ResBlock(nn.Module):
     def __init__(self, kernel_size):
+        super().__init__()
+
         self.layers = nn.Sequential(
             nn.BatchNorm1d(tmp),
             nn.LeakyReLU(),
