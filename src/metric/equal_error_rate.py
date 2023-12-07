@@ -39,5 +39,5 @@ class EqualErrorRate:
     def __init__(self):
         self.name = "equal_error_rate"
 
-    def __call__(self, bonafide_scores, other_scores):
-        return compute_eer(bonafide_scores, other_scores)[0]
+    def __call__(self, target, pred, **kwargs):
+        return compute_eer(target, pred)[0]
