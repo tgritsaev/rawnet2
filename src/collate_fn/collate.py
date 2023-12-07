@@ -65,7 +65,7 @@ def pad_2D_tensor(inputs, maxlen=None):
 
 
 def collate_fn(batch: List[dict]):
-    audio = pad_1D_tensor([item["audio"].squeeze(1) for item in batch])
+    audio = pad_1D_tensor([item["audio"].squeeze(0) for item in batch])
     target = torch.Tensor([item["target"] for item in batch])
     print("!!!!!!!!!", audio.shape, target.shape)
 
