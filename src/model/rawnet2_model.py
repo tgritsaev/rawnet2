@@ -191,7 +191,7 @@ class RawNet2Model(BaseModel):
         self.grus = nn.Sequential(
             nn.BatchNorm1d(tmp),
             nn.LeakyReLU(),
-            nn.GRU(tmp, tmp - 1, 3),
+            nn.GRU(tmp, tmp + 1, 3),
         )
         self.head = nn.Linear(tmp, 2)
 
