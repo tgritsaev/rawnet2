@@ -143,9 +143,6 @@ class SincConv_fast(nn.Module):
         return F.conv1d(waveforms, self.filters, stride=self.stride, padding=self.padding, dilation=self.dilation, bias=None, groups=1)
 
 
-tmp = 1
-
-
 class FMS(nn.Module):
     def __init__(self, num_features):
         super().__init__()
@@ -209,5 +206,5 @@ class RawNet2Model(BaseModel):
         x = self.resblocks(x)
         _, x = self.gru(x.transpose(1, 2))
         x = x[-1, :, :].squeeze(0)
-        print(f"\n{tmp.shape=} {x.shape=}")
+        print(f"\n{x.shape=}")
         return {"pred": self.head(x)}
