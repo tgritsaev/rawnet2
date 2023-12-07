@@ -200,7 +200,7 @@ class RawNet2Model(BaseModel):
             nn.BatchNorm1d(channels2),
             nn.LeakyReLU(),
         )
-        self.grus = nn.GRU(channels2, gru_hidden_size, 3)
+        self.gru = nn.GRU(channels2, gru_hidden_size, 3)
         self.head = nn.Linear(gru_hidden_size, 2)
 
     def forward(self, audio, **kwargs):
@@ -208,6 +208,6 @@ class RawNet2Model(BaseModel):
         x = self.pre_resblocks(torch.abs(x))
         x = self.resblocks(x)
         print(f"\n{x.shape=}")
-        x = self.grus(x.tranpose(1, 2))[:, -1, :]
+        x = self.gru(x.transpose(1, 2))[:, -1, :]
         print(f"\n{x.shape=}")
         return {"pred": self.head(x)}
