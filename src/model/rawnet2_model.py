@@ -147,11 +147,11 @@ tmp = 1
 
 
 class FMS(nn.Module):
-    def __init__(self):
+    def __init__(self, num_features):
         super().__init__()
 
         self.avgpool = nn.AvgPool1d(1)
-        self.attention = nn.Linear(in_features=tmp, out_features=tmp)
+        self.attention = nn.Linear(in_features=num_features, out_features=num_features)
 
     def forward(self, x):
         out = F.adaptive_avg_pool1d(x.view(x.shape[0], -1), 1)
@@ -161,18 +161,18 @@ class FMS(nn.Module):
 
 
 class ResBlock(nn.Module):
-    def __init__(self, kernel_size):
+    def __init__(self, num_features, kernel_size):
         super().__init__()
 
         self.layers = nn.Sequential(
-            nn.BatchNorm1d(tmp),
+            nn.BatchNorm1d(num_features),
             nn.LeakyReLU(),
             nn.Conv1d(3, 1, kernel_size, padding="same"),
-            nn.BatchNorm1d(tmp),
+            nn.BatchNorm1d(num_features),
             nn.LeakyReLU(),
             nn.Conv1d(3, 1, kernel_size, padding="same"),
             nn.MaxPool1d(3),
-            FMS(),
+            FMS(num_features),
         )
 
     def forward(self, x):
@@ -185,8 +185,8 @@ class RawNet2Model(BaseModel):
 
         self.sinc_filters = SincConv_fast(sinc_channels, sinc_filter_length)
         self.resblocks = nn.Sequential(
-            *[ResBlock(channels1) for _ in range(2)],
-            *[ResBlock(channels2) for _ in range(4)],
+            *[ResBlock(sinc_channels, channels1) for _ in range(2)],
+            *[ResBlock(sinc_channels, channels2) for _ in range(4)],
         )
         self.grus = nn.Sequential(
             nn.BatchNorm1d(tmp),
@@ -198,5 +198,7 @@ class RawNet2Model(BaseModel):
     def forward(self, audio, **kwargs):
         print(f"\n{audio.shape=}")
         x = self.sinc_filters(audio.unsqueeze(1))
+        print(f"\n{x.shape=}")
+        x = self.resblocks(x)
         print(f"\n{x.shape=}")
         return {"pred": 1}
