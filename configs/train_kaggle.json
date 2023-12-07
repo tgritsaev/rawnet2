@@ -16,7 +16,7 @@
             "num_workers": 1,
             "datasets": [
                 {
-                    "type": "ASVspoof2019",
+                    "type": "ASVspoof2019Dataset",
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
                         "part": "train"
@@ -29,7 +29,7 @@
             "num_workers": 1,
             "datasets": [
                 {
-                    "type": "ASVspoof2019",
+                    "type": "ASVspoof2019Dataset",
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
                         "part": "dev"
@@ -42,7 +42,7 @@
             "num_workers": 1,
             "datasets": [
                 {
-                    "type": "ASVspoof2019",
+                    "type": "ASVspoof2019Dataset",
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
                         "part": "eval"
