@@ -198,7 +198,7 @@ class RawNet2Model(BaseModel):
             nn.LeakyReLU(),
         )
         self.gru = nn.GRU(channels2, gru_hidden_size, num_layers=3, batch_first=True)
-        self.head = nn.Linear(gru_hidden_size, 1)
+        self.head = nn.Linear(gru_hidden_size, 2)
 
     def forward(self, audio, **kwargs):
         x = self.sinc_filters(audio.unsqueeze(1))
