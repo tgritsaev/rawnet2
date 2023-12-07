@@ -197,6 +197,6 @@ class RawNet2Model(BaseModel):
 
     def forward(self, audio, **kwargs):
         print(f"\n{audio.shape=}")
-        x = self.sinc_filters(audio)
+        x = self.sinc_filters(audio.unsqueeze(1))
         print(f"\n{x.shape=}")
         return {"pred": 1}
