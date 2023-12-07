@@ -108,7 +108,7 @@ class Trainer(BaseTrainer):
             if (batch_idx + 1) == self.len_epoch:
                 self._clip_grad_norm()
                 self.optimizer.step()
-                self.train_metrics.update("grad_norm", self.get_grad_norm())
+                metrics.update("grad_norm", self.get_grad_norm())
                 self.optimizer.zero_grad()
 
             if self.lr_scheduler is not None:
@@ -116,6 +116,7 @@ class Trainer(BaseTrainer):
             metrics.update("loss", batch["loss"].item())
 
         for metric in self.metrics:
+            print(is_train, metric.name)
             metrics.update(metric.name, metric(**batch))
         return batch
 
