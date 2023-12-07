@@ -45,7 +45,7 @@ class Trainer(BaseTrainer):
         self.evaluation_dataloaders = {k: v for k, v in dataloaders.items() if k != "train"}
 
         self.train_metrics = MetricTracker("loss", "grad_norm", writer=self.writer)
-        self.evaluation_metrics = MetricTracker(*[m.name for m in metrics], "grad_norm", writer=self.writer)
+        self.evaluation_metrics = MetricTracker(*[m.name for m in metrics], writer=self.writer)
 
     @staticmethod
     def move_batch_to_device(batch, device: torch.device):
