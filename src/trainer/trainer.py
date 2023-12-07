@@ -115,10 +115,9 @@ class Trainer(BaseTrainer):
                 self.lr_scheduler.step()
             metrics.update("loss", batch["loss"].item())
 
-        for metric in metrics:
-            if metric.name == "grad_norm" or metric.name == "loss":
-                break
-            metrics.update(metric.name, metric(**batch))
+        if not is_train:
+            for metric in self.metrics:
+                metrics.update(metric.name, metric(**batch))
         return batch
 
     def _evaluation_epoch(self, epoch, part, dataloader):
