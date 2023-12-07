@@ -40,7 +40,7 @@ class EqualErrorRate:
         self.name = "equal_error_rate"
 
     def __call__(self, target, pred, **kwargs):
+        print(pred.shape)
         target = target.detach().cpu().numpy()
         pred = pred.detach().cpu().numpy()[:, 1]
-        print(pred.shape)
         return compute_eer(pred[target == 1], pred[target == 0])[0]
