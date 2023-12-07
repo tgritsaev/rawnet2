@@ -154,13 +154,9 @@ class FMS(nn.Module):
         self.attention = nn.Linear(in_features=num_features, out_features=num_features)
 
     def forward(self, x):
-        print(f"in FMS {x.shape=}")
         inter = F.adaptive_avg_pool1d(x, 1).squeeze(-1)
-        print(f"{inter.shape=}")
         inter = self.attention(inter)
-        print(f"{inter.shape=}")
         inter = F.sigmoid(inter).unsqueeze(-1)
-        print(f"{inter.shape=}\nFMS end.")
         return x * inter + inter
 
 
@@ -205,16 +201,15 @@ class RawNet2Model(BaseModel):
         self.grus = nn.Sequential(
             nn.BatchNorm1d(tmp),
             nn.LeakyReLU(),
-            nn.GRU(tmp, tmp + 1, 3),
+            nn.GRU(channels2, channels2 * 2, 3),
         )
-        self.head = nn.Linear(tmp, 2)
+        self.head = nn.Linear(channels2, 2)
 
     def forward(self, audio, **kwargs):
-        print(f"\n{audio.shape=}")
         x = self.sinc_filters(audio.unsqueeze(1))
-        print(f"\n{x.shape=}")
         x = self.pre(torch.abs(x))
-        print(f"\n{x.shape=}")
         x = self.resblocks(x)
         print(f"\n{x.shape=}")
-        return {"pred": 1}
+        x = self.grus(x)
+        print(f"\n{x.shape=}")
+        return {"pred": self.head(x)}
