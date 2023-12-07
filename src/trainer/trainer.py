@@ -113,8 +113,7 @@ class Trainer(BaseTrainer):
 
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step()
-            for loss_name in self.loss_names:
-                metrics.update(loss_name, batch[loss_name].item())
+            metrics.update("loss", batch["loss"].item())
 
         for metric in self.metrics:
             metrics.update(metric.name, metric(**batch))
