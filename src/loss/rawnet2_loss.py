@@ -9,4 +9,4 @@ class RawNet2Loss(nn.Module):
 
     def forward(self, pred, target, **kwargs):
         assert pred.shape == target.shape, f"{pred.shape=}\t{target.shape=}"
-        return {"loss": self.weighted_ce_loss(pred, target)}
+        return {"loss": self.weighted_ce_loss(pred.squeeze(1), target)}
