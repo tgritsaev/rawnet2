@@ -28,7 +28,7 @@
             ]
         },
         "val": {
-            "batch_size": 4,
+            "batch_size": 16,
             "num_workers": 1,
             "datasets": [
                 {
@@ -36,13 +36,13 @@
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
                         "part": "dev",
-                        "limit": 4
+                        "limit": 16
                     }
                 }
             ]
         },
         "test": {
-            "batch_size": 4,
+            "batch_size": 16,
             "num_workers": 1,
             "datasets": [
                 {
@@ -50,7 +50,7 @@
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
                         "part": "eval",
-                        "limit": 4
+                        "limit": 16
                     }
                 }
             ]
