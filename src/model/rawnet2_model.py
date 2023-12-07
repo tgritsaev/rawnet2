@@ -201,15 +201,9 @@ class RawNet2Model(BaseModel):
         self.head = nn.Linear(gru_hidden_size, 2)
 
     def forward(self, audio, **kwargs):
-        print("begin begin")
-        print(audio.shape)
         x = self.sinc_filters(audio.unsqueeze(1))
         x = self.pre_resblocks(torch.abs(x))
         x = self.resblocks(x)
-        print(x.shape)
         _, x = self.gru(x.transpose(1, 2))
-        print(x.shape)
         x = x[-1, :, :]
-        print(x.shape)
-        print("end end")
         return {"pred": self.head(x)}

@@ -133,7 +133,7 @@ class Trainer(BaseTrainer):
             for _, batch in tqdm(enumerate(dataloader), desc=part, total=len(dataloader)):
                 batch = self.process_batch(batch, False, 0, metrics=self.evaluation_metrics)
             self.writer.set_step(epoch * self.len_epoch, part)
-            self._log_predictions(False, **batch)
+            # self._log_predictions(**batch)
             # self._log_spectrogram(batch["spectrogram"])
             self._log_scalars(self.evaluation_metrics)
 
