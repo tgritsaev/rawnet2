@@ -39,7 +39,6 @@ def get_dataloaders(configs: ConfigParser):
         assert xor("batch_size" in params, "batch_sampler" in params), "You must provide batch_size or batch_sampler for each split"
         if "batch_size" in params:
             bs = params["batch_size"]
-            bes = configs["trainer"]["batch_expand_size"]
             shuffle = True
             if shuffle in params.keys():
                 shuffle = params["shuffle"]
