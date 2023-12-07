@@ -91,7 +91,7 @@
         "monitor": "min val_loss",
         "early_stop": 100,
         "visualize": "wandb",
-        "wandb_project": null,
+        "wandb_project": "dla5_one_batch",
         "grad_norm_clip": 5
     }
 }
