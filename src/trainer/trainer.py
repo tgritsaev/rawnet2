@@ -71,11 +71,16 @@ class Trainer(BaseTrainer):
         return base.format(current, total, 100.0 * current / total)
 
     @torch.no_grad()
-    def _log_predictions(self, audio, pred, target, examples_to_log=4, **kwargs):
+    def _log_predictions(self, audio, pred, target, examples_to_log=3, **kwargs):
         rows = {}
         convert_to_string = lambda v: "spoof" if v == 0 else "bona-fide"
-        for _ in range(examples_to_log):
+        for i in range(examples_to_log):
             idx = random.randint(0, audio.shape[0] - 1)
+            try_find_i = 0
+            #  if i = 0: sample bona-fide, else: sample spoof
+            while try_find_i < 10 and ((i == 0 and target[idx] == 1) or (i > 0 and target[idx] == 0)):
+                idx = random.randint(0, audio.shape[0] - 1)
+                try_find_i += 1
             rows[idx] = {
                 "audio": self.writer.wandb.Audio(audio[idx].cpu().squeeze().numpy(), sample_rate=DEFAULT_SR),
                 "pred": str(pred[idx].tolist()),
