@@ -35,7 +35,7 @@
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
                         "part": "dev",
-                        "limit": 256
+                        "limit": 1024
                     }
                 }
             ]
@@ -83,7 +83,7 @@
     },
     "trainer": {
         "epochs": 10,
-        "len_epoch": 3000,
+        "len_epoch": 10000,
         "log_step": 100,
         "save_dir": "saved/",
         "save_period": 1,
