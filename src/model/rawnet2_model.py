@@ -183,7 +183,12 @@ class RawNet2Model(BaseModel):
     def __init__(self, sinc_channels, sinc_filter_length, channels1, channels2):
         super().__init__()
 
-        self.sinc_filters = SincConv_fast(sinc_channels, sinc_filter_length)
+        self.sinc_filters = nn.Sequential(
+            SincConv_fast(sinc_channels, sinc_filter_length),
+            nn.MaxPool1d(3),
+            nn.BatchNorm1d(sinc_channels),
+            nn.LeakyReLU(),
+        )
         self.resblocks = nn.Sequential(
             *[ResBlock(sinc_channels, channels1) for _ in range(2)],
             *[ResBlock(sinc_channels, channels2) for _ in range(4)],
