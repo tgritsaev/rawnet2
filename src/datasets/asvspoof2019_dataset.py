@@ -26,7 +26,7 @@ class ASVspoof2019Dataset(Dataset):
         return len(self.protocols)
 
     def __getitem__(self, idx):
-        audio, _ = torchaudio.load(os.path.join(self.dir_w_audio, self.protocols[idx][0]))
+        audio, _ = torchaudio.load(os.path.join(self.dir_w_audio, self.protocols[idx][0] + ".flac"))
         if self.max_sec_length is not None:
             audio = audio[:, : self.max_sec_length * DEFAULT_SR]
         return {"audio": audio, "target": self.protocols[idx][1]}
