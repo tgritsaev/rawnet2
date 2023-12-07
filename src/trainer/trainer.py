@@ -78,7 +78,7 @@ class Trainer(BaseTrainer):
             idx = random.randint(0, audio.shape[0] - 1)
             try_find_i = 0
             #  if i = 0: sample bona-fide, else: sample spoof
-            while try_find_i < 10 and ((i == 0 and target[idx] == 1) or (i > 0 and target[idx] == 0)):
+            while try_find_i < 30 and ((i == 0 and target[idx] == 1) or (i > 0 and target[idx] == 0)):
                 idx = random.randint(0, audio.shape[0] - 1)
                 try_find_i += 1
             rows[idx] = {
