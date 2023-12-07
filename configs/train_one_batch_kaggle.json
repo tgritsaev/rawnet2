@@ -65,6 +65,12 @@
         "type": "RawNet2Loss",
         "args": {}
     },
+    "metrics":[
+        {
+            "type": "EqualErrorRate",
+            "args": {}
+        }
+    ],
     "lr_scheduler": {
         "type": "OneCycleLR",
         "args": {
