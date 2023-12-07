@@ -209,7 +209,7 @@ class RawNet2Model(BaseModel):
         print(x.shape)
         _, x = self.gru(x.transpose(1, 2))
         print(x.shape)
-        x = x[-1, :, :].squeeze(0)
+        x = x[-1, :, :]
         print(x.shape)
         print("end end")
         return {"pred": self.head(x)}
