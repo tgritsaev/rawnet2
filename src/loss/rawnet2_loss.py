@@ -8,5 +8,5 @@ class RawNet2Loss(nn.Module):
         self.weighted_ce_loss = nn.CrossEntropyLoss(weight=torch.Tensor([1, 9]))
 
     def forward(self, pred, target, **kwargs):
-        assert pred.shape == target.shape, f"{pred.shape=}\t{target.shape=}"
+        assert pred.squeeze(1).shape == target.shape, f"{pred.squeeze(1).shape=}\t{target.shape=}"
         return {"loss": self.weighted_ce_loss(pred.squeeze(1), target)}
