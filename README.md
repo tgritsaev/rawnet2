@@ -1,13 +1,11 @@
 # Antispoof with RawNet2 
-
-Implementation is based on the [END-TO-END ANTI-SPOOFING WITH RAWNET2](https://arxiv.org/pdf/2011.01108.pdf).
+Implementation is based on the [END-TO-END ANTI-SPOOFING WITH RAWNET2](https://arxiv.org/pdf/2011.01108.pdf) article.
 
 The model predicts whether a speech is real or spoofed.
 
 You can read the [original statement](https://github.com/XuMuK1/dla2023/tree/2023/hw5_as).
 
 ## Installation guide
-
 1. Use python3.11
 ```shell
 conda create -n fastspeech2 python=3.11 && conda activate fastspeech2
@@ -41,7 +39,6 @@ Results will be saved in the `test_model/results`.
 ## Wandb Report
 
 ## Credits
-
 This repository is based on a heavily modified fork
 of [pytorch-template](https://github.com/victoresque/pytorch-template) repository.
 
