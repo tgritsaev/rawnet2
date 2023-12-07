@@ -103,6 +103,7 @@ class Trainer(BaseTrainer):
         if is_train:
             loss = self.criterion(**batch)
             batch.update(loss)
+            print(f"{loss.item()=}")
             batch["loss"].backward()
 
             if (batch_idx + 1) == self.len_epoch:
@@ -133,7 +134,7 @@ class Trainer(BaseTrainer):
             for _, batch in tqdm(enumerate(dataloader), desc=part, total=len(dataloader)):
                 batch = self.process_batch(batch, False, 0, metrics=self.evaluation_metrics)
             self.writer.set_step(epoch * self.len_epoch, part)
-            # self._log_predictions(**batch)
+            self._log_predictions(**batch)
             # self._log_spectrogram(batch["spectrogram"])
             self._log_scalars(self.evaluation_metrics)
 
@@ -168,6 +169,7 @@ class Trainer(BaseTrainer):
                 self.logger.debug("Train Epoch: {} {} Loss: {:.6f}".format(epoch, self._progress(batch_idx), batch["loss"].item()))
                 self.writer.add_scalar("learning rate", self.lr_scheduler.get_last_lr()[0])
                 self._log_scalars(self.train_metrics)
+                self._log_predictions(**batch)
                 # we don't want to reset train metrics at the start of every epoch
                 # because we are interested in recent train metrics
                 last_train_metrics = self.train_metrics.result()
@@ -175,7 +177,6 @@ class Trainer(BaseTrainer):
                 bar.update(self.log_step)
 
             if batch_idx + 1 >= self.len_epoch:
-                self._log_predictions(**batch)
                 break
 
         log = last_train_metrics
