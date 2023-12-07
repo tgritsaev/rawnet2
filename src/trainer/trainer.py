@@ -44,8 +44,6 @@ class Trainer(BaseTrainer):
 
         self.train_metrics = MetricTracker("loss", "grad_norm", writer=self.writer)
         self.evaluation_metrics = MetricTracker(*[m.name for m in metrics], "grad_norm", writer=self.writer)
-        print(self.train_metrics._data)
-        print(self.evaluation_metrics._data)
 
     @staticmethod
     def move_batch_to_device(batch, device: torch.device):
@@ -117,8 +115,9 @@ class Trainer(BaseTrainer):
                 self.lr_scheduler.step()
             metrics.update("loss", batch["loss"].item())
 
-        for metric in self.metrics:
-            print(is_train, metric.name)
+        for metric in metrics:
+            if metric.name == "grad_norm" or metric.name == "loss":
+                break
             metrics.update(metric.name, metric(**batch))
         return batch
 
