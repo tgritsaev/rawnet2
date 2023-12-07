@@ -42,4 +42,5 @@ class EqualErrorRate:
     def __call__(self, target, pred, **kwargs):
         target = target.detach().cpu().numpy()
         pred = pred.detach().cpu().numpy()
+        print(pred, target)
         return compute_eer(pred[target == 1], pred[target == 0])[0]
