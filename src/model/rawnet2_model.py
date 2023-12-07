@@ -155,13 +155,13 @@ class FMS(nn.Module):
 
     def forward(self, x):
         print(f"in FMS {x.shape=}")
-        out = F.adaptive_avg_pool1d(x, 1).squueze(-1)
-        print(f"{out.shape=}")
-        out = self.attention(out)
-        print(f"{out.shape=}")
-        out = F.sigmoid().unsqueeze(-1)
-        print(f"{out.shape=}\nFMS end.")
-        return x * out + out
+        inter = F.adaptive_avg_pool1d(x, 1).squeeze(-1)
+        print(f"{inter.shape=}")
+        inter = self.attention(inter)
+        print(f"{inter.shape=}")
+        inter = F.sigmoid(inter).unsqueeze(-1)
+        print(f"{inter.shape=}\nFMS end.")
+        return x * inter + inter
 
 
 class ResBlock(nn.Module):
