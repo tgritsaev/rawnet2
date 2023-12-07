@@ -1,9 +1,10 @@
 # Antispoof with RawNet2 
 
-[FastSpeech2 article](https://arxiv.org/pdf/2006.04558.pdf) and [FastSpeech article](https://arxiv.org/pdf/1905.09263.pdf).
+Implementation is based on the [END-TO-END ANTI-SPOOFING WITH RAWNET2](https://arxiv.org/pdf/2011.01108.pdf).
 
-## Example
+The model predicts whether a speech is real or spoofed.
 
+You can read the [original statement](https://github.com/XuMuK1/dla2023/tree/2023/hw5_as).
 
 ## Installation guide
 
