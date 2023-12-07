@@ -80,7 +80,7 @@ class Trainer(BaseTrainer):
                 break
             rows[i] = {
                 "audio": self.writer.wandb.Audio(audio.cpu().squeeze().numpy(), sample_rate=DEFAULT_SR),
-                "pred": convert_to_string(pred),
+                "pred": convert_to_string(pred.argmax(-1)),
                 "target": convert_to_string(target),
             }
             i += 1
