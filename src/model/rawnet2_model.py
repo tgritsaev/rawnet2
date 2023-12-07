@@ -206,5 +206,4 @@ class RawNet2Model(BaseModel):
         x = self.resblocks(x)
         _, x = self.gru(x.transpose(1, 2))
         x = x[-1, :, :].squeeze(0)
-        print(f"\n{x.shape=}")
         return {"pred": self.head(x)}
