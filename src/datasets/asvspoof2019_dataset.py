@@ -1,4 +1,5 @@
 import os
+import logging
 
 import torchaudio
 from torch.utils.data import Dataset
@@ -21,6 +22,8 @@ class ASVspoof2019Dataset(Dataset):
             protocol_list = protocol_line.split()
             protocol_list[1]
             self.protocols.append([protocol_list[1], 0 if protocol_list[-1] == "spoof" else 1])
+
+        logging.info(f"{part}_len:\t{len(self.protocols)}")
 
     def __len__(self):
         return len(self.protocols)

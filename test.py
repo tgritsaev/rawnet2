@@ -10,8 +10,6 @@ from tqdm import tqdm
 import src.model as module_model
 from src.utils import DEFAULT_SR
 from src.utils.parse_config import ConfigParser
-from src.utils.text import text_to_sequence
-from waveglow import get_wav, get_waveglow
 
 
 def main(config, args):

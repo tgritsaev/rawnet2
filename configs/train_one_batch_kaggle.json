@@ -27,20 +27,6 @@
                 }
             ]
         },
-        "val": {
-            "batch_size": 16,
-            "num_workers": 1,
-            "datasets": [
-                {
-                    "type": "ASVspoof2019Dataset",
-                    "args": {
-                        "dir": "/kaggle/input/asvpoof-2019-dataset",
-                        "part": "dev",
-                        "limit": 16
-                    }
-                }
-            ]
-        },
         "test": {
             "batch_size": 16,
             "num_workers": 1,
@@ -49,8 +35,7 @@
                     "type": "ASVspoof2019Dataset",
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
-                        "part": "eval",
-                        "limit": 16
+                        "part": "eval"
                     }
                 }
             ]
