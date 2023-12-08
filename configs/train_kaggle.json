@@ -74,9 +74,9 @@
         }
     ],
     "lr_scheduler": {
-        "type": "ConstantLR",
+        "type": "ExponentialLR",
         "args": {
-            "factor": 0.99999
+            "gamma": 0.99999
         }
     },
     "trainer": {
