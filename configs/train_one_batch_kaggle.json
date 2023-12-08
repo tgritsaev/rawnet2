@@ -35,7 +35,8 @@
                     "type": "ASVspoof2019Dataset",
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
-                        "part": "eval"
+                        "part": "eval",
+                        "max_sec_length": 4
                     }
                 }
             ]
