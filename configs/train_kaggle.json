@@ -13,7 +13,7 @@
     },
     "data": {
         "train": {
-            "batch_size": 64,
+            "batch_size": 8,
             "num_workers": 1,
             "datasets": [
                 {
@@ -26,23 +26,8 @@
                 }
             ]
         },
-        "val": {
-            "batch_size": 64,
-            "num_workers": 1,
-            "datasets": [
-                {
-                    "type": "ASVspoof2019Dataset",
-                    "args": {
-                        "dir": "/kaggle/input/asvpoof-2019-dataset",
-                        "part": "dev",
-                        "max_sec_length": 4,
-                        "limit": 1024
-                    }
-                }
-            ]
-        },
         "test": {
-            "batch_size": 64,
+            "batch_size": 8,
             "num_workers": 1,
             "datasets": [
                 {
@@ -81,7 +66,7 @@
     },
     "trainer": {
         "epochs": 10,
-        "len_epoch": 5000,
+        "len_epoch": 10000,
         "log_step": 100,
         "save_dir": "saved/",
         "save_period": 1,
