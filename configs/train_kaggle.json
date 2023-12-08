@@ -35,7 +35,8 @@
                     "args": {
                         "dir": "/kaggle/input/asvpoof-2019-dataset",
                         "part": "dev",
-                        "max_sec_length": 4
+                        "max_sec_length": 4,
+                        "limit": 1024
                     }
                 }
             ]
@@ -58,7 +59,7 @@
     "optimizer": {
         "type": "AdamW",
         "args": {
-            "lr": 1e-4,
+            "lr": 3e-4,
             "weight_decay": 1e-4
         }
     },
@@ -72,7 +73,12 @@
             "args": {}
         }
     ],
-    "lr_scheduler": null,
+    "lr_scheduler": {
+        "type": "ConstantLR",
+        "args": {
+            "factor": 0.99999
+        }
+    },
     "trainer": {
         "epochs": 10,
         "len_epoch": 5000,
