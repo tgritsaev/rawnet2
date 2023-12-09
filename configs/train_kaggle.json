@@ -13,7 +13,7 @@
     },
     "data": {
         "train": {
-            "batch_size": 64,
+            "batch_size": 32,
             "num_workers": 1,
             "datasets": [
                 {
@@ -65,7 +65,7 @@
         }
     },
     "trainer": {
-        "epochs": 10,
+        "epochs": 20,
         "len_epoch": 5000,
         "log_step": 100,
         "save_dir": "saved/",
