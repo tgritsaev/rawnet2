@@ -148,11 +148,11 @@ class FMS(nn.Module):
         super().__init__()
 
         self.avgpool = nn.AvgPool1d(1)
-        self.attention = nn.Linear(in_features=num_features, out_features=num_features)
+        self.linear = nn.Linear(in_features=num_features, out_features=num_features)
 
     def forward(self, x):
         inter = F.adaptive_avg_pool1d(x, 1).squeeze(-1)
-        inter = self.attention(inter)
+        inter = self.linear(inter)
         inter = F.sigmoid(inter).unsqueeze(-1)
         return x * inter + inter
 
@@ -164,20 +164,16 @@ class ResBlock(nn.Module):
         self.layers = nn.Sequential(
             nn.BatchNorm1d(in_channels),
             nn.LeakyReLU(),
-            nn.Conv1d(in_channels, in_channels, kernel_size, padding="same"),
-            nn.BatchNorm1d(in_channels),
-            nn.LeakyReLU(),
             nn.Conv1d(in_channels, out_channels, kernel_size, padding="same"),
+            nn.BatchNorm1d(out_channels),
+            nn.LeakyReLU(),
+            nn.Conv1d(out_channels, out_channels, kernel_size, padding="same"),
             nn.MaxPool1d(3),
             FMS(out_channels),
         )
 
     def forward(self, x):
         return self.layers(x)
-
-
-def AbsMaxPool1d(*args, **kwargs):
-    return nn.MaxPool1d(3)
 
 
 class RawNet2Model(BaseModel):
@@ -204,6 +200,5 @@ class RawNet2Model(BaseModel):
         x = self.sinc_filters(audio.unsqueeze(1))
         x = self.pre_resblocks(torch.abs(x))
         x = self.resblocks(x)
-        _, x = self.gru(x.transpose(1, 2))
-        x = x[-1, :, :]
+        x = self.gru(x.transpose(1, 2))[0][:, -1, :]
         return {"pred": self.head(x)}

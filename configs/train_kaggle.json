@@ -4,8 +4,8 @@
     "arch": {
         "type": "RawNet2Model",
         "args": {
-            "sinc_channels": 1024,
-            "sinc_filter_length": 128,
+            "sinc_channels": 128,
+            "sinc_filter_length": 1024,
             "channels1": 20,
             "channels2": 128,
             "gru_hidden_size": 1024
@@ -13,7 +13,7 @@
     },
     "data": {
         "train": {
-            "batch_size": 8,
+            "batch_size": 64,
             "num_workers": 1,
             "datasets": [
                 {
@@ -27,7 +27,7 @@
             ]
         },
         "test": {
-            "batch_size": 8,
+            "batch_size": 64,
             "num_workers": 1,
             "datasets": [
                 {
@@ -66,7 +66,7 @@
     },
     "trainer": {
         "epochs": 10,
-        "len_epoch": 10000,
+        "len_epoch": 5000,
         "log_step": 100,
         "save_dir": "saved/",
         "save_period": 1,
