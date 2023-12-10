@@ -172,7 +172,7 @@ class ResBlock(nn.Module):
             nn.Conv1d(out_channels, out_channels, kernel_size, padding="same"),
         ]
         self.layers_before_skip = nn.Sequential(*layers_before_skip)
-        self.channels_changer = None if in_channels == out_channels else nn.Conv1d(in_channels, out_channels)
+        self.channels_changer = None if in_channels == out_channels else nn.Conv1d(in_channels, out_channels, 1)
         self.layers_after_skip = nn.Sequential(
             nn.MaxPool1d(3),
             FMS(out_channels),
