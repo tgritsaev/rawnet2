@@ -7,9 +7,10 @@ import numpy as np
 from src.model.base_model import BaseModel
 
 
+NEGATIVE_SLOPE = 0.3
+
+
 # https://github.com/XuMuK1/dla2023/blob/2023/week10/antispoofing_seminar.ipynb
-
-
 class SincConv_fast(nn.Module):
     """Sinc-based convolution
     Parameters
@@ -158,22 +159,32 @@ class FMS(nn.Module):
 
 
 class ResBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size):
+    def __init__(self, in_channels, out_channels, kernel_size, is_first=False):
         super().__init__()
 
-        self.layers = nn.Sequential(
-            nn.BatchNorm1d(in_channels),
-            nn.LeakyReLU(),
+        layers_before_skip = []
+        if not is_first:
+            layers_before_skip += [nn.BatchNorm1d(in_channels), nn.LeakyReLU(NEGATIVE_SLOPE)]
+        layers_before_skip += [
             nn.Conv1d(in_channels, out_channels, kernel_size, padding="same"),
             nn.BatchNorm1d(out_channels),
-            nn.LeakyReLU(),
+            nn.LeakyReLU(NEGATIVE_SLOPE),
             nn.Conv1d(out_channels, out_channels, kernel_size, padding="same"),
+        ]
+        self.layers_before_skip = nn.Sequential(*layers_before_skip)
+        self.channels_changer = None if in_channels == out_channels else nn.Conv1d(in_channels, out_channels)
+        self.layers_after_skip = nn.Sequential(
             nn.MaxPool1d(3),
             FMS(out_channels),
         )
 
     def forward(self, x):
-        return self.layers(x)
+        out = self.layers_before_skip(x)
+        if self.channels_changer:
+            x = self.channels_changer(x)
+        out = out + x
+        out = self.layers_after_skip(out)
+        return out
 
 
 class RawNet2Model(BaseModel):
@@ -184,21 +195,22 @@ class RawNet2Model(BaseModel):
         self.pre_resblocks = nn.Sequential(
             nn.MaxPool1d(3),
             nn.BatchNorm1d(sinc_channels),
-            nn.LeakyReLU(),
+            nn.LeakyReLU(NEGATIVE_SLOPE),
         )
         self.resblocks = nn.Sequential(
-            ResBlock(sinc_channels, channels1, 3),
+            ResBlock(sinc_channels, channels1, 3, True),
             ResBlock(channels1, channels2, 3),
             *[ResBlock(channels2, channels2, 3) for _ in range(4)],
             nn.BatchNorm1d(channels2),
-            nn.LeakyReLU(),
+            nn.LeakyReLU(NEGATIVE_SLOPE),
         )
         self.gru = nn.GRU(channels2, gru_hidden_size, num_layers=3, batch_first=True)
         self.head = nn.Linear(gru_hidden_size, 2)
 
     def forward(self, audio, **kwargs):
         x = self.sinc_filters(audio.unsqueeze(1))
-        x = self.pre_resblocks(torch.abs(x))
+        # x = self.pre_resblocks(torch.abs(x))
+        x = self.pre_resblocks(x)
         x = self.resblocks(x)
         x = self.gru(x.transpose(1, 2))[0][:, -1, :]
         return {"pred": self.head(x)}
