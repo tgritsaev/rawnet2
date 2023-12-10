@@ -61,12 +61,12 @@
     "lr_scheduler": {
         "type": "ExponentialLR",
         "args": {
-            "gamma": 0.999999
+            "gamma": 0.99999
         }
     },
     "trainer": {
-        "epochs": 20,
-        "len_epoch": 5000,
+        "epochs": 10,
+        "len_epoch": 2500,
         "log_step": 100,
         "save_dir": "saved/",
         "save_period": 1,
