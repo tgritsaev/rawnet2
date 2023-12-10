@@ -209,7 +209,7 @@ class RawNet2Model(BaseModel):
 
     def forward(self, audio, **kwargs):
         x = self.sinc_filters(audio.unsqueeze(1))
-        # x = self.pre_resblocks(torch.abs(x))
+        x = torch.abs(x)
         x = self.pre_resblocks(x)
         x = self.resblocks(x)
         x = self.gru(x.transpose(1, 2))[0][:, -1, :]
