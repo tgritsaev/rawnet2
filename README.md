@@ -8,14 +8,14 @@ You can read the [original statement](https://github.com/XuMuK1/dla2023/tree/202
 ## Installation guide
 1. Use python3.11
 ```shell
-conda create -n fastspeech2 python=3.11 && conda activate fastspeech2
+conda create -n rawnet2 python=3.11 && conda activate rawnet2
 ```
 2. Install libraries
 ```shell
 pip3 install -r requirements.txt
 ```
-3. Download [ASVSpoof 2019 Dataset](https://datashare.ed.ac.uk/handle/10283/3336), [Kaggle link](https://www.kaggle.com/datasets/awsaf49/asvpoof-2019-dataset).
-4. Download my RawNet2 checkpoint
+3. To reproduce training, download [ASVSpoof 2019 Dataset](https://datashare.ed.ac.uk/handle/10283/3336), [Kaggle link](https://www.kaggle.com/datasets/awsaf49/asvpoof-2019-dataset).
+4. To test quality of my solution, download my RawNet2 checkpoint:
 ```shell
 python3 scripts/download_checkpoint.py
 ```
@@ -28,7 +28,6 @@ python3 train.py -c configs/train_kaggle.json
 The final model was trained with the `configs/train_kaggle.json`.
 
 ## Test
-1. Run for testing
 ```shell
 python3 test.py
 ```
@@ -36,7 +35,10 @@ python3 test.py
 
 Results will be saved in the `test_model/results`.
 
-## Wandb Report
+## Wandb 
+
+1. [Wandb report](https://wandb.ai/tgritsaev/dla5/reports/Anti-spoofing-with-RawNet2--Vmlldzo2MjMyMzQ4).
+2. [Wandb project](https://wandb.ai/tgritsaev/dla5/overview?workspace=user-tgritsaev).
 
 ## Credits
 This repository is based on a heavily modified fork
