@@ -201,15 +201,15 @@ class RawNet2Model(BaseModel):
             ResBlock(sinc_channels, channels1, 3, True),
             ResBlock(channels1, channels2, 3),
             *[ResBlock(channels2, channels2, 3) for _ in range(4)],
-            nn.BatchNorm1d(channels2),
-            nn.LeakyReLU(NEGATIVE_SLOPE),
+            # nn.BatchNorm1d(channels2),
+            # nn.LeakyReLU(NEGATIVE_SLOPE),
         )
-        self.gru = nn.GRU(channels2, gru_hidden_size, num_layers=3, batch_first=True)
+        self.gru = nn.GRU(channels2, gru_hidden_size, num_layers=1, batch_first=True)
         self.head = nn.Linear(gru_hidden_size, 2)
 
     def forward(self, audio, **kwargs):
         x = self.sinc_filters(audio.unsqueeze(1))
-        x = torch.abs(x)
+        # x = torch.abs(x)
         x = self.pre_resblocks(x)
         x = self.resblocks(x)
         x = self.gru(x.transpose(1, 2))[0][:, -1, :]
