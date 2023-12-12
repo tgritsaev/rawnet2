@@ -52,8 +52,8 @@ class SincConv_fast(nn.Module):
         dilation=1,
         bias=False,
         groups=1,
-        min_low_hz=0,
-        min_band_hz=0,
+        min_low_hz=100,
+        min_band_hz=100,
     ):
         super().__init__()
 
