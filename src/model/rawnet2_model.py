@@ -45,6 +45,8 @@ class SincConv_fast(nn.Module):
         self,
         out_channels,
         kernel_size,
+        sinc_filter_type="mel-scaled",
+        requires_grad=True,
         sample_rate=16000,
         in_channels=1,
         stride=1,
@@ -87,15 +89,18 @@ class SincConv_fast(nn.Module):
         low_hz = 30
         high_hz = self.sample_rate / 2 - (self.min_low_hz + self.min_band_hz)
 
-        mel = np.linspace(self.to_mel(low_hz), self.to_mel(high_hz), self.out_channels + 1)
-        print(f"!! {mel=}")
-        hz = self.to_hz(mel)
+        if sinc_filter_type == "mel-scaled":
+            mel = np.linspace(self.to_mel(low_hz), self.to_mel(high_hz), self.out_channels + 1)
+            hz = self.to_hz(mel)
+        elif sinc_filter_type == "linear-scaled":
+            mel = np.linspace(low_hz, high_hz, self.out_channels + 1)
+            hz = self.to_hz(mel)
 
         # filter lower frequency (out_channels, 1)
-        self.low_hz_ = nn.Parameter(torch.Tensor(hz[:-1]).view(-1, 1))
+        self.low_hz_ = nn.Parameter(torch.Tensor(hz[:-1]).view(-1, 1), requires_grad)
 
         # filter frequency band (out_channels, 1)
-        self.band_hz_ = nn.Parameter(torch.Tensor(np.diff(hz)).view(-1, 1))
+        self.band_hz_ = nn.Parameter(torch.Tensor(np.diff(hz)).view(-1, 1), requires_grad)
 
         # Hamming window
         # self.window_ = torch.hamming_window(self.kernel_size)
@@ -189,10 +194,24 @@ class ResBlock(nn.Module):
 
 
 class RawNet2Model(BaseModel):
-    def __init__(self, sinc_channels, sinc_filter_length, channels1, channels2, gru_hidden_size):
+    def __init__(
+        self,
+        sinc_channels,
+        sinc_filter_length,
+        channels1,
+        channels2,
+        gru_hidden_size,
+        sinc_filter_type="mel-scaled",
+        requires_grad=True,
+    ):
         super().__init__()
 
-        self.sinc_filters = SincConv_fast(sinc_channels, sinc_filter_length)
+        self.sinc_filters = SincConv_fast(
+            sinc_channels,
+            sinc_filter_length,
+            sinc_filter_type,
+            requires_grad,
+        )
         self.pre_resblocks = nn.Sequential(
             nn.MaxPool1d(3),
             nn.BatchNorm1d(sinc_channels),

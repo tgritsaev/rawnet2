@@ -1,0 +1,82 @@
+{
+    "name": "rawnet2",
+    "n_gpu": 1,
+    "arch": {
+        "type": "RawNet2Model",
+        "args": {
+            "sinc_channels": 128,
+            "sinc_filter_length": 1024,
+            "channels1": 20,
+            "channels2": 128,
+            "gru_hidden_size": 1024,
+            "sinc_filter_type": "linear-scaled",
+            "requires_grad": false
+        }
+    },
+    "data": {
+        "train": {
+            "batch_size": 32,
+            "num_workers": 1,
+            "datasets": [
+                {
+                    "type": "ASVspoof2019Dataset",
+                    "args": {
+                        "dir": "/kaggle/input/asvpoof-2019-dataset",
+                        "part": "train",
+                        "max_sec_length": 4
+                    }
+                }
+            ]
+        },
+        "test": {
+            "batch_size": 64,
+            "num_workers": 1,
+            "datasets": [
+                {
+                    "type": "ASVspoof2019Dataset",
+                    "args": {
+                        "dir": "/kaggle/input/asvpoof-2019-dataset",
+                        "part": "eval",
+                        "max_sec_length": 4
+                    }
+                }
+            ]
+        }
+    },
+    "optimizer": {
+        "type": "AdamW",
+        "args": {
+            "lr": 1e-4,
+            "weight_decay": 1e-4
+        }
+    },
+    "loss": {
+        "type": "RawNet2Loss",
+        "args": {}
+    },
+    "metrics":[
+        {
+            "type": "EqualErrorRate",
+            "args": {}
+        }
+    ],
+    "lr_scheduler": {
+        "type": "ExponentialLR",
+        "args": {
+            "gamma": 0.99999
+        }
+    },
+    "trainer": {
+        "epochs": 10,
+        "len_epoch": 5000,
+        "log_step": 100,
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 100,
+        "visualize": "wandb",
+        "wandb_project": "dla5",
+        "grad_norm_clip": 10
+    }
+}
