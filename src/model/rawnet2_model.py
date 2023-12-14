@@ -93,8 +93,7 @@ class SincConv_fast(nn.Module):
             mel = np.linspace(self.to_mel(low_hz), self.to_mel(high_hz), self.out_channels + 1)
             hz = self.to_hz(mel)
         elif sinc_filter_type == "linear-scaled":
-            mel = np.linspace(low_hz, high_hz, self.out_channels + 1)
-            hz = self.to_hz(mel)
+            hz = np.linspace(low_hz, high_hz, self.out_channels + 1)
 
         # filter lower frequency (out_channels, 1)
         self.low_hz_ = nn.Parameter(torch.Tensor(hz[:-1]).view(-1, 1), requires_grad)
