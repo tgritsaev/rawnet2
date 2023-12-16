@@ -44,7 +44,5 @@ Results will be saved in the `test_model/results`.
 This repository is based on a heavily modified fork
 of [pytorch-template](https://github.com/victoresque/pytorch-template) repository.
 
-Equal Error Rate implementation was taken from the HSE DLA course [homework](https://github.com/XuMuK1/dla2023/blob/2023/hw5_as/calculate_eer.py).
-
-SincConv implementation was taken from the HSE DLA course [seminar](https://github.com/XuMuK1/dla2023/blob/2023/week10/antispoofing_seminar.ipynb).
+Equal Error Rate implementation was taken from the HSE DLA course [homework](https://github.com/XuMuK1/dla2023/blob/2023/hw5_as/calculate_eer.py). SincConv implementation was taken from the HSE DLA course [seminar](https://github.com/XuMuK1/dla2023/blob/2023/week10/antispoofing_seminar.ipynb).
 
