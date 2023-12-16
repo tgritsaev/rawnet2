@@ -1,4 +1,4 @@
-# Antispoof with RawNet2 
+# Antispoofing with RawNet2 
 Implementation is based on the [END-TO-END ANTI-SPOOFING WITH RAWNET2](https://arxiv.org/pdf/2011.01108.pdf) article.
 
 The model predicts whether a speech is real or spoofed.
