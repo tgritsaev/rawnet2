@@ -32,6 +32,9 @@ The final model was trained with the `configs/train_kaggle.json`.
 python3 test.py
 ```
 `test.py` include such arguments:
+* `-c, --config, default="configs/train_kaggle.json"`
+* `-cp, --checkpoint, default="test_model/as-checkpoint.pth"`
+* `-i, --input-dir, default="test_model/audios"`
 
 Results will be saved in the `test_model/results`.
 
