@@ -15,7 +15,7 @@ conda create -n rawnet2 python=3.11 && conda activate rawnet2
 pip3 install -r requirements.txt
 ```
 3. To reproduce training, download [ASVSpoof 2019 Dataset](https://datashare.ed.ac.uk/handle/10283/3336), [Kaggle link](https://www.kaggle.com/datasets/awsaf49/asvpoof-2019-dataset).
-4. To test quality of my solution, download my RawNet2 checkpoint:
+4. To test the quality of my solution, download my RawNet2 checkpoint:
 ```shell
 python3 scripts/download_checkpoint.py
 ```
