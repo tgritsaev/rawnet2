@@ -32,12 +32,14 @@ def main(config, args):
     model = model.to(device)
     model.eval()
 
-    cut_length = config["data"]["train"]["datasets"]["args"]["max_sec_length"] * DEFAULT_SR
+    cut_length = config["data"]["train"]["datasets"][0]["args"]["max_sec_length"] * DEFAULT_SR
 
-    for audio_name in os.listdir(args.input_dir):
+    for audio_name in sorted(os.listdir(args.input_dir)):
         audio, sr = torchaudio.load(f"{args.input_dir}/{audio_name}")
-        result = model(audio[:cut_length])
-        print(result)
+        resampled_audio = torchaudio.functional.resample(audio, orig_freq=sr, new_freq=DEFAULT_SR)
+        pred = model(resampled_audio[:cut_length])["pred"][0].detach().cpu().numpy()
+        verdict = "bona-fide" if abs(pred[0]) > abs(pred[1]) else "spoofed"
+        logger.info(f"{audio_name}:\nverdict: {verdict}\t\tpredictions: {pred}\n")
 
     logger.info("Testing has ended.")
 
